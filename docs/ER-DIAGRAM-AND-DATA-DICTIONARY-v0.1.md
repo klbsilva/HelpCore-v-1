@@ -425,7 +425,7 @@ Um chamado pode ter vários vínculos com incidentes ao longo do tempo. Não ass
 - CHECK (weekday BETWEEN 1 AND 7)
 - CHECK (end_time > start_time)
 
-Agenda semanal padrão aprovada para segunda a sexta-feira: 09:00–12:00, 13:30–15:00 e 15:30–16:50. Sábado e domingo sem intervalos de trabalho. Isso resulta em 5h50 (350 minutos) contabilizáveis por dia. O intervalo das 15:00 às 15:30 é de 30 minutos conforme o horário informado pelo Product Owner; prevalece sobre a referência anterior de pausa de 20 minutos.
+Agenda semanal padrão aprovada para segunda a sexta-feira: 09:00–12:00, 13:30–15:00 e 15:20–16:50. Sábado e domingo sem intervalos de trabalho. Isso resulta em 6h00 (360 minutos) contabilizáveis por dia. O intervalo das 15:00 às 15:20 é de 20 minutos conforme o horário informado pelo Product Owner; prevalece sobre a referência anterior de pausa de 20 minutos.
 
 #### calendar_exceptions
 - id UUID PK
@@ -456,7 +456,7 @@ Para exception_type=special_hours, os intervalos específicos substituem a agend
 - effective_until TIMESTAMPTZ NULL
 - created_by UUID FK users NOT NULL
 
-Crítica usa meta imediata (zero minutos de espera para primeira resposta); a lógica de alertas e escalonamento deve ser especificada separadamente. Com 350 minutos contabilizáveis por dia, as metas equivalem a: Baixa 700 minutos úteis; Média 350 minutos úteis; Alta 240 minutos úteis; Crítica 0 minuto. O relógio de resolução e SLA avança apenas nos intervalos configurados; espera do supervisor continua sendo contabilizada dentro desses intervalos.
+Crítica usa meta imediata (zero minutos de espera para primeira resposta); a lógica de alertas e escalonamento deve ser especificada separadamente. Com 350 minutos contabilizáveis por dia, as metas equivalem a: Baixa 720 minutos úteis; Média 360 minutos úteis; Alta 240 minutos úteis; Crítica 0 minuto. O relógio de resolução e SLA avança apenas nos intervalos configurados; espera do supervisor continua sendo contabilizada dentro desses intervalos.
 
 #### ticket_sla_instances
 - id UUID PK
