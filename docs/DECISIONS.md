@@ -27,7 +27,7 @@ Este registro consolida decisões aprovadas para evitar regressões e interpreta
 | HC-080 | Produtividade usa múltiplos indicadores, não apenas volume resolvido. |
 | HC-081 | Filtros por técnico, período e categoria; histórico preservado. |
 | Resolução | Supervisor tem 12 horas úteis para confirmar/contestar; ausência de resposta fecha automaticamente. |
-| Expediente contabilizável | Segunda a sexta: 09:00–12:00, 13:30–15:00 e 15:30–16:50 (America/Sao_Paulo). Total de 5h50/350 minutos por dia. Sábados, domingos e feriados/dias fechados não contam; horários especiais são configuráveis. A pausa 15:00–15:30 é de 30 minutos e substitui a referência anterior de 20 minutos. |
+| Expediente contabilizável | Segunda a sexta: 09:00–12:00, 13:30–15:00 e 15:20–16:50 (America/Sao_Paulo). Total de 6h00/360 minutos por dia. Sábados, domingos e feriados/dias fechados não contam; horários especiais são configuráveis. A pausa corrigida é 15:00–15:20 (20 minutos). |
 | Abertura de chamados | Supervisores podem abrir chamados 24 horas por dia; fora dos intervalos úteis, o relógio de SLA/resolução fica pausado e retoma no próximo intervalo. |
 | Crítico | E-mail imediato para Kléber; aviso genérico a supervisores, sem dados privados. |
 | Arquivamento | Automático após 30 dias do fechamento; sem exclusão definitiva pela interface. |
