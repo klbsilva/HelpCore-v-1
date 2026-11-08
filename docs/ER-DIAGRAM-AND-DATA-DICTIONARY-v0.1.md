@@ -560,13 +560,17 @@ A conta da aplicação terá INSERT/SELECT em audit_events, sem UPDATE/DELETE. A
 2. Mensagens internas/anotações da TI são permitidas. Seu conteúdo é restrito a administradores e técnicos autorizados e nunca deve vazar para supervisores por API, busca, notificação, exportação ou anexo.
 3. Incidentes terão protocolo independente com prefixo INC (ex.: INC-0001).
 4. E-mail será obrigatório para supervisores ativos, exclusivamente como contato e canal de notificação; username permanece o identificador de login.
+5. Chamados serão preservados permanentemente no sistema e arquivados, nunca excluídos pela aplicação.
+6. Mensagens serão preservadas junto ao chamado, sem exclusão automática.
+7. Anexos serão preservados junto ao chamado, sem exclusão automática.
+8. Auditoria será preservada permanentemente e não poderá ser editada ou apagada pela aplicação.
+9. Notificações serão mantidas por 12 meses; após esse prazo, poderão ser removidas por rotina automática de retenção, ressalvadas obrigações legais ou necessidade de investigação.
 
 ## 8. Pendências de validação
 
 1. Cada equipe terá exatamente um supervisor responsável na V1? Proposta: sim.
 2. Categoria e serviço afetado permanecem campos distintos? Proposta: sim.
-3. Retenção de mensagens, anexos e auditoria ainda precisa de política.
-4. Fórmulas finais de tempo de atendimento e produtividade precisam de definição formal.
+3. Fórmulas finais de tempo de atendimento e produtividade precisam de definição formal.
 
 ## 9. Próximas etapas após aprovação
 
