@@ -41,7 +41,7 @@ Regras:
 ### 2.2 Organização e funcionários
 
 - teams: equipe vinculada a exatamente um supervisor responsável na V1.
-- employees: cadastro independente do vínculo atual; nome, identificador interno opcional, estado.
+- employees: cadastro independente do vínculo atual; somente nome completo, situação ativo/inativo, data do cadastro e responsável pelo cadastro. Não haverá identificador interno. A equipe atual é derivada do vínculo vigente em employee_team_assignments.
 - employee_team_assignments: histórico de vínculo, com employee_id, team_id, valid_from, valid_to, autor da mudança e motivo.
 
 Invariante: cada supervisor possui exatamente uma equipe na V1; cada equipe possui exatamente um supervisor responsável. Todo funcionário ativo deve possuir exatamente um vínculo atual. Cadastro ou ativação sem equipe é bloqueado. Transferência fecha o vínculo anterior e abre o novo na mesma transação. Não pode haver janela persistida sem equipe ou vínculos atuais duplicados.
@@ -181,7 +181,7 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 3. Um chamado poderá ser relacionado a vários incidentes; cada associação deve ser explícita, justificada e auditada.
 4. Todo funcionário ativo deve pertencer a exatamente uma equipe; cadastro/ativação sem equipe é bloqueado.
 5. Mensagens internas/anotações da TI são permitidas e restritas a administradores e técnicos autorizados; supervisores não podem acessá-las por nenhum canal.
-6. Incidentes terão protocolo próprio com prefixo INC (ex.: INC-0001).
+6. Incidentes terão protocolo próprio com prefixo INC (ex.: INC-0001).\n7. Cadastro de funcionário terá somente nome completo, equipe atual (derivada do vínculo vigente), situação ativo/inativo, data do cadastro e responsável pelo cadastro; não haverá identificador interno.
 
 ## 8. Pendências antes do esquema físico
 
