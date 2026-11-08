@@ -171,8 +171,9 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 - Chamados são arquivados, não apagados definitivamente pela interface.
 - Arquivamento automático após 30 dias do fechamento.
 - Chamados arquivados permanecem consultáveis por administradores e pelo supervisor atual do funcionário, respeitando HC-067.
-- Anexos têm política de retenção total ainda pendente; não excluir automaticamente sem aprovação.
-- Auditoria possui política própria de retenção e proteção, a definir antes da produção.
+- Chamados, mensagens e anexos são preservados permanentemente no sistema, sem exclusão automática; chamados podem ser arquivados.
+- Auditoria é preservada permanentemente e protegida contra UPDATE/DELETE pela role da aplicação.
+- Notificações são mantidas por 12 meses e podem ser eliminadas automaticamente após esse prazo, exceto quando houver retenção legal ou necessidade de investigação/auditoria.
 
 ## 7. Decisões já confirmadas pelo Product Owner
 
@@ -182,6 +183,9 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 4. Todo funcionário ativo deve pertencer a exatamente uma equipe; cadastro/ativação sem equipe é bloqueado.
 5. Mensagens internas/anotações da TI são permitidas e restritas a administradores e técnicos autorizados; supervisores não podem acessá-las por nenhum canal.
 6. Incidentes terão protocolo próprio com prefixo INC (ex.: INC-0001).\n7. Cadastro de funcionário terá somente nome completo, equipe atual (derivada do vínculo vigente), situação ativo/inativo, data do cadastro e responsável pelo cadastro; não haverá identificador interno.
+8. Chamados, mensagens e anexos serão preservados permanentemente no sistema; chamados podem ser arquivados, mas não excluídos pela aplicação.
+9. Auditoria será preservada permanentemente, sem UPDATE/DELETE pela aplicação.
+10. Notificações terão retenção de 12 meses e poderão ser removidas automaticamente depois desse prazo, ressalvadas retenções legais ou de investigação.
 
 ## 8. Pendências antes do esquema físico
 
