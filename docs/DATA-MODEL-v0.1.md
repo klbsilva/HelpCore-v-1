@@ -93,15 +93,21 @@ Resolver incidente não encerra automaticamente os chamados associados. Comunica
 ### 2.7 Calendário, SLA e métricas
 
 - business_calendars: calendário e timezone configurados.
+- calendar_work_intervals: intervalos efetivamente contabilizáveis por dia da semana.
 - calendar_exceptions: feriados, dias excepcionais e expediente especial.
+- calendar_exception_work_intervals: intervalos de trabalho específicos que substituem a agenda semanal em dias excepcionais.
 - sla_policies: metas por prioridade e versão da política.
 - ticket_sla_instances: política aplicada ao chamado/ciclo, início do relógio, vencimento calculado, estado e conclusão.
 - ticket_time_events: trilha de eventos para calcular tempos por ciclo e técnico.
 - ticket_assignment_periods ou ticket_assignments: períodos por técnico, incluindo início/fim e transferências.
 
-Metas aprovadas de primeira resposta: Baixa 2 dias úteis; Média 1 dia útil; Alta 4 horas úteis; Crítica imediata.
+Metas aprovadas de primeira resposta: Baixa 2 dias úteis (700 minutos úteis); Média 1 dia útil (350 minutos úteis); Alta 4 horas úteis (240 minutos úteis); Crítica imediata (0 minuto).
 
-Regra HC-076: o relógio total não para durante espera do supervisor. A espera é medida separadamente. As fórmulas finais de tempo total, espera, atendimento e produtividade precisam ser especificadas e aprovadas antes da implementação. Não inferir que tempo de espera será subtraído do total.
+**Calendário contabilizável aprovado:** segunda a sexta-feira, 09:00–12:00, 13:30–15:00 e 15:30–16:50. Sábados, domingos e feriados/dias fechados não contam. Total diário: 5h50 (350 minutos). A pausa informada como 15:00–15:30 corresponde a 30 minutos e prevalece sobre a referência anterior de 20 minutos.
+
+Chamados podem ser abertos a qualquer hora. Entretanto, relógios de resolução e SLA só avançam dentro dos intervalos de trabalho configurados. Fora deles, o relógio pausa e retoma no próximo intervalo útil. O tempo aguardando supervisor continua contando dentro dos intervalos contabilizáveis e também é registrado separadamente.
+
+Regra HC-076 permanece válida quanto à separação dos períodos de espera e à preservação de eventos por ciclo, mas a regra anterior de relógio corrido foi substituída por este calendário útil, conforme decisão posterior do Product Owner.
 
 A mudança para Em atendimento registra o início automaticamente (HC-078). Primeira resposta exige ação humana do técnico (HC-077).
 
@@ -183,9 +189,11 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 4. Todo funcionário ativo deve pertencer a exatamente uma equipe; cadastro/ativação sem equipe é bloqueado.
 5. Mensagens internas/anotações da TI são permitidas e restritas a administradores e técnicos autorizados; supervisores não podem acessá-las por nenhum canal.
 6. Incidentes terão protocolo próprio com prefixo INC (ex.: INC-0001).\n7. Cadastro de funcionário terá somente nome completo, equipe atual (derivada do vínculo vigente), situação ativo/inativo, data do cadastro e responsável pelo cadastro; não haverá identificador interno.
-8. Chamados, mensagens e anexos serão preservados permanentemente no sistema; chamados podem ser arquivados, mas não excluídos pela aplicação.
-9. Auditoria será preservada permanentemente, sem UPDATE/DELETE pela aplicação.
-10. Notificações terão retenção de 12 meses e poderão ser removidas automaticamente depois desse prazo, ressalvadas retenções legais ou de investigação.
+8. O relógio de resolução e SLA contará somente os intervalos úteis aprovados: seg-sex 09:00–12:00, 13:30–15:00 e 15:30–16:50 (350 minutos/dia); aberturas são permitidas 24/7, espera do supervisor conta dentro do expediente.
+9. A pausa das 15:00 às 15:30 é de 30 minutos, conforme o horário confirmado, substituindo a referência anterior de 20 minutos.
+10. Chamados, mensagens e anexos serão preservados permanentemente no sistema; chamados podem ser arquivados, mas não excluídos pela aplicação.
+11. Auditoria será preservada permanentemente, sem UPDATE/DELETE pela aplicação.
+12. Notificações terão retenção de 12 meses e poderão ser removidas automaticamente depois desse prazo, ressalvadas retenções legais ou de investigação.
 
 ## 8. Pendências antes do esquema físico
 
