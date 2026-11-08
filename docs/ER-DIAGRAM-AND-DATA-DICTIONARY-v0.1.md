@@ -159,13 +159,12 @@ Regra V1: cada supervisor possui exatamente uma equipe ativa; supervisor_user_id
 
 #### employees
 - id UUID PK
-- display_name VARCHAR(160) NOT NULL
-- employee_code VARCHAR(60) NULL UNIQUE — identificador interno, se existir
-- is_active BOOLEAN NOT NULL DEFAULT TRUE
-- created_at, updated_at TIMESTAMPTZ NOT NULL
-- created_by, updated_by UUID FK users
+- full_name VARCHAR(160) NOT NULL
+- is_active BOOLEAN NOT NULL DEFAULT TRUE — situação ativo/inativo
+- created_at TIMESTAMPTZ NOT NULL — data do cadastro
+- created_by UUID FK users NOT NULL — administrador responsável pelo cadastro
 
-Não exigir e-mail, telefone, CPF ou login do funcionário afetado.
+O cadastro contém somente nome completo, equipe atual (derivada do vínculo vigente em employee_team_assignments), situação, data do cadastro e responsável pelo cadastro. Não há identificador interno, e-mail, telefone, CPF ou login do funcionário afetado. Alterações de equipe são registradas no histórico de vínculos; a equipe atual não deve ser duplicada como campo editável em employees.
 
 #### employee_team_assignments
 - id UUID PK
