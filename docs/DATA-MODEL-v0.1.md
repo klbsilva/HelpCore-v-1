@@ -101,9 +101,9 @@ Resolver incidente não encerra automaticamente os chamados associados. Comunica
 - ticket_time_events: trilha de eventos para calcular tempos por ciclo e técnico.
 - ticket_assignment_periods ou ticket_assignments: períodos por técnico, incluindo início/fim e transferências.
 
-Metas aprovadas de primeira resposta: Baixa 2 dias úteis (700 minutos úteis); Média 1 dia útil (350 minutos úteis); Alta 4 horas úteis (240 minutos úteis); Crítica imediata (0 minuto).
+Metas aprovadas de primeira resposta: Baixa 2 dias úteis (720 minutos úteis); Média 1 dia útil (360 minutos úteis); Alta 4 horas úteis (240 minutos úteis); Crítica imediata (0 minuto).
 
-**Calendário contabilizável aprovado:** segunda a sexta-feira, 09:00–12:00, 13:30–15:00 e 15:30–16:50. Sábados, domingos e feriados/dias fechados não contam. Total diário: 5h50 (350 minutos). A pausa informada como 15:00–15:30 corresponde a 30 minutos e prevalece sobre a referência anterior de 20 minutos.
+**Calendário contabilizável aprovado:** segunda a sexta-feira, 09:00–12:00, 13:30–15:00 e 15:20–16:50. Sábados, domingos e feriados/dias fechados não contam. Total diário: 6h00 (360 minutos). A pausa corrigida pelo Product Owner é 15:00–15:20 (20 minutos).
 
 Chamados podem ser abertos a qualquer hora. Entretanto, relógios de resolução e SLA só avançam dentro dos intervalos de trabalho configurados. Fora deles, o relógio pausa e retoma no próximo intervalo útil. O tempo aguardando supervisor continua contando dentro dos intervalos contabilizáveis e também é registrado separadamente.
 
@@ -189,8 +189,8 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 4. Todo funcionário ativo deve pertencer a exatamente uma equipe; cadastro/ativação sem equipe é bloqueado.
 5. Mensagens internas/anotações da TI são permitidas e restritas a administradores e técnicos autorizados; supervisores não podem acessá-las por nenhum canal.
 6. Incidentes terão protocolo próprio com prefixo INC (ex.: INC-0001).\n7. Cadastro de funcionário terá somente nome completo, equipe atual (derivada do vínculo vigente), situação ativo/inativo, data do cadastro e responsável pelo cadastro; não haverá identificador interno.
-8. O relógio de resolução e SLA contará somente os intervalos úteis aprovados: seg-sex 09:00–12:00, 13:30–15:00 e 15:30–16:50 (350 minutos/dia); aberturas são permitidas 24/7, espera do supervisor conta dentro do expediente.
-9. A pausa das 15:00 às 15:30 é de 30 minutos, conforme o horário confirmado, substituindo a referência anterior de 20 minutos.
+8. O relógio de resolução e SLA contará somente os intervalos úteis aprovados: seg-sex 09:00–12:00, 13:30–15:00 e 15:20–16:50 (350 minutos/dia); aberturas são permitidas 24/7, espera do supervisor conta dentro do expediente.
+9. A pausa das 15:00 às 15:20 é de 20 minutos, conforme correção posterior do Product Owner.
 10. Chamados, mensagens e anexos serão preservados permanentemente no sistema; chamados podem ser arquivados, mas não excluídos pela aplicação.
 11. Auditoria será preservada permanentemente, sem UPDATE/DELETE pela aplicação.
 12. Notificações terão retenção de 12 meses e poderão ser removidas automaticamente depois desse prazo, ressalvadas retenções legais ou de investigação.
