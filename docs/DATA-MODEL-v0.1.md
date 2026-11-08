@@ -23,7 +23,7 @@
 
 ### 2.1 Identidade e autorização
 
-- users: conta de acesso, username único para autenticação, nome de exibição, e-mail de contato opcional, hash de senha, estado, troca obrigatória de senha e timestamps. O username é o identificador de login dos supervisores; não exigir e-mail como nome de usuário.
+- users: conta de acesso, username único para autenticação, nome de exibição, e-mail de contato obrigatório para supervisores ativos, hash de senha, estado, troca obrigatória de senha e timestamps. O username é o identificador de login dos supervisores; não exigir e-mail como nome de usuário.
 - roles: perfis funcionais (administrador, supervisor, técnico).
 - permissions: permissões atômicas.
 - user_roles: associação de usuários e perfis.
@@ -44,7 +44,7 @@ Regras:
 - employees: cadastro independente do vínculo atual; nome, identificador interno opcional, estado.
 - employee_team_assignments: histórico de vínculo, com employee_id, team_id, valid_from, valid_to, autor da mudança e motivo.
 
-Invariante: cada supervisor possui exatamente uma equipe na V1; cada equipe possui exatamente um supervisor responsável. Para cada funcionário ativo deve existir no máximo um vínculo atual. Transferência fecha o vínculo anterior e abre o novo na mesma transação. Não pode haver janela persistida sem equipe ou vínculos atuais duplicados.
+Invariante: cada supervisor possui exatamente uma equipe na V1; cada equipe possui exatamente um supervisor responsável. Todo funcionário ativo deve possuir exatamente um vínculo atual. Cadastro ou ativação sem equipe é bloqueado. Transferência fecha o vínculo anterior e abre o novo na mesma transação. Não pode haver janela persistida sem equipe ou vínculos atuais duplicados.
 
 A autorização de chamados de funcionário é derivada do vínculo atual. O chamado continua guardando quem abriu originalmente e qual era o supervisor responsável à época.
 
@@ -72,7 +72,9 @@ O protocolo principal é estável. Os ciclos não criam novos chamados independe
 
 ### 2.5 Mensagens e anexos
 
-- ticket_messages: chamado/ciclo, autor, conteúdo, data/hora e tipo de mensagem.
+- ticket_messages: chamado/ciclo, autor, conteúdo, data/hora e tipo de mensagem (resposta pública ou anotação interna).
+
+Mensagens internas/anotações da TI são permitidas e visíveis exclusivamente a administradores e técnicos autorizados. Supervisores não podem acessá-las por interface, API, pesquisa, notificações, exportações ou anexos associados. Respostas públicas seguem a autorização de acesso do chamado conforme HC-067.
 - attachments: chave privada do objeto, nome original seguro, MIME detectado, tamanho, hash, estado de verificação, autor e timestamp.
 - message_attachments: associação de anexos a mensagens.
 - ticket_attachments: associação de anexos diretamente ao chamado, quando enviados na abertura.
@@ -81,7 +83,7 @@ Validação do arquivo é feita no servidor. O banco não armazena o binário. D
 
 ### 2.6 Incidentes e comunicados
 
-- incidents: protocolo, título, descrição, serviço relacionado, severidade, estado, início, normalização e encerramento.
+- incidents: protocolo próprio com prefixo INC (ex.: INC-0001), título, descrição, serviço relacionado, severidade, estado, início, normalização e encerramento.
 - incident_ticket_links: relação N:N entre incidentes e chamados; um incidente pode agrupar vários chamados e um chamado pode ser relacionado a vários incidentes quando houver justificativa operacional. Cada vínculo registra autor, data/hora e motivo.
 - announcements: tipo, conteúdo, estado, publicação, previsão opcional, autor e encerramento.
 - announcement_acknowledgements: comunicado, supervisor, data/hora de ciência.
@@ -174,28 +176,27 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 
 ## 7. Decisões já confirmadas pelo Product Owner
 
-1. Login dos supervisores por username e senha. E-mail é dado de contato/notificação, não identificador obrigatório de login.
+1. Login dos supervisores por username e senha. E-mail é dado de contato/notificação, não identificador de login; será obrigatório para supervisores ativos.
 2. Cada supervisor terá uma única equipe na V1.
 3. Um chamado poderá ser relacionado a vários incidentes; cada associação deve ser explícita, justificada e auditada.
+4. Todo funcionário ativo deve pertencer a exatamente uma equipe; cadastro/ativação sem equipe é bloqueado.
+5. Mensagens internas/anotações da TI são permitidas e restritas a administradores e técnicos autorizados; supervisores não podem acessá-las por nenhum canal.
+6. Incidentes terão protocolo próprio com prefixo INC (ex.: INC-0001).
 
-## 8. Questões que precisam de decisão antes do esquema físico
+## 8. Pendências antes do esquema físico
 
-1. Um funcionário pode ficar temporariamente sem equipe? A regra atual indica que não; confirmar.
-2. O chamado guarda categoria e serviço afetado separadamente? Recomendação: sim.
-3. Precisamos de protocolo separado para incidentes e comunicados?
-4. Quais campos de funcionário são realmente necessários além do nome e estado?
-5. Retenção de mensagens, anexos, notificações e auditoria.
-6. Fórmulas exatas de tempo de atendimento, espera e produtividade.
-7. Regras para usuários desativados e reativados, preservando histórico.
+1. O chamado guarda categoria e serviço afetado separadamente? Recomendação: sim.
+2. Quais campos de funcionário são realmente necessários além do nome e estado?
+3. Retenção de mensagens, anexos, notificações e auditoria.
+4. Fórmulas exatas de tempo de atendimento, espera e produtividade.
+5. Regras para usuários desativados e reativados, preservando histórico.
 
 ## 9. Próxima entrega
 
-Após revisão e aprovação deste modelo lógico:
-1. Diagrama ER.
-2. Dicionário de dados com campos e tipos.
-3. Restrições, chaves e índices.
-4. Estratégia de migrations.
-5. Contratos transacionais para transferência, reabertura, edição e fechamento automático.
-6. Testes de integridade e autorização.
+O diagrama ER e o dicionário de dados foram publicados em `docs/ER-DIAGRAM-AND-DATA-DICTIONARY-v0.1.md`. Após revisão desse documento:
+1. Fechar as pendências remanescentes.
+2. Produzir esquema físico final.
+3. Definir estratégia de migrations e seed inicial.
+4. Definir testes de integridade e autorização.
 
 **Este documento não autoriza criação de tabelas, migrations ou implementação.**
