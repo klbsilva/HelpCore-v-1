@@ -40,10 +40,9 @@ Regras:
 
 ### 2.2 Organização e funcionários
 
-- teams: equipe vinculada a um supervisor.
+- teams: equipe vinculada a exatamente um supervisor responsável na V1.
 - employees: cadastro independente do vínculo atual; nome, identificador interno opcional, estado.
 - employee_team_assignments: histórico de vínculo, com employee_id, team_id, valid_from, valid_to, autor da mudança e motivo.
-- supervisor_team_access (se necessário): associação explícita entre usuários supervisores e equipes.
 
 Invariante: cada supervisor possui exatamente uma equipe na V1; cada equipe possui exatamente um supervisor responsável. Para cada funcionário ativo deve existir no máximo um vínculo atual. Transferência fecha o vínculo anterior e abre o novo na mesma transação. Não pode haver janela persistida sem equipe ou vínculos atuais duplicados.
 
@@ -173,18 +172,21 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 - Anexos têm política de retenção total ainda pendente; não excluir automaticamente sem aprovação.
 - Auditoria possui política própria de retenção e proteção, a definir antes da produção.
 
-## 7. Questões que precisam de decisão antes do esquema físico
+## 7. Decisões já confirmadas pelo Product Owner
 
-1. Login do supervisor será por e-mail ou identificador interno?
-2. Cada supervisor terá exatamente uma equipe ou poderá administrar mais de uma?
-3. Um funcionário pode ficar temporariamente sem equipe? Regra atual sugere que não; confirmar.
-4. Um chamado pode ser vinculado a mais de um incidente? O modelo permite, mas validar regra.
-5. O chamado guarda categoria e serviço afetado separadamente? Recomendação: sim.
-6. Precisamos de protocolo separado para incidentes e comunicados?
-7. Quais campos de funcionário são realmente necessários além do nome e estado?
-8. Retenção de mensagens, anexos, notificações e auditoria.
-9. Fórmulas exatas de tempo de atendimento, espera e produtividade.
-10. Regras para usuários desativados e reativados, preservando histórico.
+1. Login dos supervisores por username e senha. E-mail é dado de contato/notificação, não identificador obrigatório de login.
+2. Cada supervisor terá uma única equipe na V1.
+3. Um chamado poderá ser relacionado a vários incidentes; cada associação deve ser explícita, justificada e auditada.
+
+## 8. Questões que precisam de decisão antes do esquema físico
+
+1. Um funcionário pode ficar temporariamente sem equipe? A regra atual indica que não; confirmar.
+2. O chamado guarda categoria e serviço afetado separadamente? Recomendação: sim.
+3. Precisamos de protocolo separado para incidentes e comunicados?
+4. Quais campos de funcionário são realmente necessários além do nome e estado?
+5. Retenção de mensagens, anexos, notificações e auditoria.
+6. Fórmulas exatas de tempo de atendimento, espera e produtividade.
+7. Regras para usuários desativados e reativados, preservando histórico.
 
 ## 9. Próxima entrega
 
