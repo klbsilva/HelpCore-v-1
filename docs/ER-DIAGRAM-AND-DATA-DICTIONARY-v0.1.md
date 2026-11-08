@@ -9,10 +9,13 @@
 
 ## 1. Decisões de produto incorporadas
 
-- Login de supervisores por username único + senha; e-mail é contato/notificação.
+- Login de supervisores por username único + senha; e-mail é contato/notificação e obrigatório para supervisores ativos.
 - Cada supervisor administra exatamente uma equipe na V1.
 - Um chamado pode ser relacionado a vários incidentes; cada vínculo é explícito e auditado.
 - Funcionários afetados não possuem conta de acesso.
+- Todo funcionário ativo deve possuir exatamente um vínculo atual com uma equipe.
+- Mensagens internas/observações da TI são permitidas e visíveis somente a administradores e técnicos autorizados; supervisores não podem acessá-las.
+- Incidentes possuem protocolo próprio com prefixo INC (ex.: INC-0001).
 - A visibilidade dos chamados acompanha o vínculo atual do funcionário (HC-067).
 - Kléber e Felipe são administradores equivalentes; Kléber é o técnico inicial e recebe novos chamados.
 - Reabertura mantém o protocolo principal e cria um novo ciclo.
@@ -95,7 +98,7 @@ Observação: a relação entre USERS e TEAMS é 1:N no desenho físico geral, m
 - id UUID PK
 - username VARCHAR(80) NOT NULL UNIQUE
 - display_name VARCHAR(160) NOT NULL
-- email VARCHAR(254) NULL — contato e notificações; não é login obrigatório
+- email VARCHAR(254) NOT NULL para usuários supervisores ativos — contato e notificações; não é login obrigatório
 - password_hash TEXT NOT NULL
 - account_status VARCHAR(20) NOT NULL — active, blocked, disabled
 - must_change_password BOOLEAN NOT NULL DEFAULT TRUE
@@ -176,7 +179,7 @@ Não exigir e-mail, telefone, CPF ou login do funcionário afetado.
 
 Invariantes:
 - No máximo um vínculo atual por funcionário (valid_to IS NULL).
-- Um funcionário ativo deve ter um vínculo atual, conforme regra de cadastro da empresa.
+- Todo funcionário ativo deve ter exatamente um vínculo atual. Cadastro/ativação sem equipe é bloqueado.
 - Transferência fecha o vínculo anterior e cria o novo na mesma transação.
 - O banco deve impedir dois vínculos atuais simultâneos, por índice único parcial.
 - Alteração deve ser auditada.
@@ -324,11 +327,11 @@ Grant somente para chamado e usuário específicos, por 15 minutos. Chamados fec
 - ticket_cycle_id UUID FK ticket_cycles NOT NULL
 - author_user_id UUID FK users NOT NULL
 - body TEXT NOT NULL
-- message_type VARCHAR(20) NOT NULL — public_reply, internal_note (se notas internas forem aprovadas; padrão inicial public_reply)
+- message_type VARCHAR(20) NOT NULL — public_reply, internal_note
 - created_at TIMESTAMPTZ NOT NULL
 - edited_at TIMESTAMPTZ NULL
 
-Nota interna não deve ser exibida a supervisores. Se notas internas não fizerem parte do escopo V1, desabilitar message_type internal_note.
+Regra de autorização obrigatória: internal_note só pode ser consultada por administradores e técnicos autorizados. Supervisores nunca recebem o conteúdo em APIs, buscas, notificações, exportações ou anexos associados. public_reply é visível ao supervisor autorizado conforme HC-067 e à TI.
 
 #### attachments
 - id UUID PK
@@ -358,7 +361,7 @@ Um anexo pertence a um único contexto de chamado ou mensagem. Limites por arqui
 
 #### incidents
 - id UUID PK
-- protocol_number BIGINT NOT NULL UNIQUE
+- protocol_number BIGINT NOT NULL UNIQUE — número sequencial para gerar INC-0001
 - title VARCHAR(180) NOT NULL
 - description TEXT NOT NULL
 - service_id UUID FK services NULL
@@ -552,18 +555,21 @@ A conta da aplicação terá INSERT/SELECT em audit_events, sem UPDATE/DELETE. A
 - Não alterar automaticamente status do chamado.
 - Desassociação mantém registro histórico.
 
-## 7. Pontos que ainda precisam de validação
+## 7. Decisões confirmadas nesta revisão
 
-1. Funcionário ativo deve obrigatoriamente possuir uma equipe atual? Proposta: sim.
-2. Cada equipe tem um supervisor responsável único na V1? Decisão de uma equipe por supervisor está aprovada; a regra de um supervisor por equipe é proposta.
-3. Categoria e serviço afetado permanecem campos distintos? Proposta: sim.
-4. Chamados podem receber notas internas da TI ou todas as mensagens são visíveis ao supervisor? Proposta inicial: somente mensagens compartilhadas na V1; notas internas ficam desabilitadas até aprovação.
-5. Protocolo de incidente terá prefixo próprio (ex.: INC-0001)? Proposta: sim.
-6. Retenção de mensagens, anexos e auditoria ainda precisa de política.
-7. Fórmulas finais de tempo de atendimento e produtividade precisam de definição formal.
-8. E-mail de contato dos supervisores será opcional no cadastro ou obrigatório para notificações? Proposta: obrigatório para supervisores ativos, embora não seja login.
+1. Todo funcionário ativo deve pertencer a exatamente uma equipe. Não permitir cadastro/ativação sem equipe; transferências permanecem atômicas.
+2. Mensagens internas/anotações da TI são permitidas. Seu conteúdo é restrito a administradores e técnicos autorizados e nunca deve vazar para supervisores por API, busca, notificação, exportação ou anexo.
+3. Incidentes terão protocolo independente com prefixo INC (ex.: INC-0001).
+4. E-mail será obrigatório para supervisores ativos, exclusivamente como contato e canal de notificação; username permanece o identificador de login.
 
-## 8. Próximas etapas após aprovação
+## 8. Pendências de validação
+
+1. Cada equipe terá exatamente um supervisor responsável na V1? Proposta: sim.
+2. Categoria e serviço afetado permanecem campos distintos? Proposta: sim.
+3. Retenção de mensagens, anexos e auditoria ainda precisa de política.
+4. Fórmulas finais de tempo de atendimento e produtividade precisam de definição formal.
+
+## 9. Próximas etapas após aprovação
 
 1. Revisar este modelo com o Product Owner.
 2. Resolver os pontos pendentes acima.
