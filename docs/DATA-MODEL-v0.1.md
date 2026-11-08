@@ -1,6 +1,6 @@
-# HelpCore — Modelo lógico de dados v0.1
+# HelpCore — Modelo lógico de dados v0.2
 
-**Status:** proposta para revisão do Product Owner  
+**Status:** proposta atualizada com decisões do Product Owner; aguardando revisão final  
 **Projeto:** HelpCore / ITDESK  
 **Banco previsto:** PostgreSQL  
 **Arquitetura:** monólito modular  
@@ -23,7 +23,7 @@
 
 ### 2.1 Identidade e autorização
 
-- users: conta de acesso, nome de exibição, e-mail/login, hash de senha, estado, troca obrigatória de senha, timestamps.
+- users: conta de acesso, username único para autenticação, nome de exibição, e-mail de contato opcional, hash de senha, estado, troca obrigatória de senha e timestamps. O username é o identificador de login dos supervisores; não exigir e-mail como nome de usuário.
 - roles: perfis funcionais (administrador, supervisor, técnico).
 - permissions: permissões atômicas.
 - user_roles: associação de usuários e perfis.
@@ -45,7 +45,7 @@ Regras:
 - employee_team_assignments: histórico de vínculo, com employee_id, team_id, valid_from, valid_to, autor da mudança e motivo.
 - supervisor_team_access (se necessário): associação explícita entre usuários supervisores e equipes.
 
-Invariante: para cada funcionário ativo deve existir no máximo um vínculo atual. Transferência fecha o vínculo anterior e abre o novo na mesma transação. Não pode haver janela persistida sem equipe ou vínculos atuais duplicados.
+Invariante: cada supervisor possui exatamente uma equipe na V1; cada equipe possui exatamente um supervisor responsável. Para cada funcionário ativo deve existir no máximo um vínculo atual. Transferência fecha o vínculo anterior e abre o novo na mesma transação. Não pode haver janela persistida sem equipe ou vínculos atuais duplicados.
 
 A autorização de chamados de funcionário é derivada do vínculo atual. O chamado continua guardando quem abriu originalmente e qual era o supervisor responsável à época.
 
@@ -83,7 +83,7 @@ Validação do arquivo é feita no servidor. O banco não armazena o binário. D
 ### 2.6 Incidentes e comunicados
 
 - incidents: protocolo, título, descrição, serviço relacionado, severidade, estado, início, normalização e encerramento.
-- incident_ticket_links: relação N:N entre incidentes e chamados; um incidente pode agrupar vários chamados e um chamado pode ser relacionado conforme regra de negócio definida.
+- incident_ticket_links: relação N:N entre incidentes e chamados; um incidente pode agrupar vários chamados e um chamado pode ser relacionado a vários incidentes quando houver justificativa operacional. Cada vínculo registra autor, data/hora e motivo.
 - announcements: tipo, conteúdo, estado, publicação, previsão opcional, autor e encerramento.
 - announcement_acknowledgements: comunicado, supervisor, data/hora de ciência.
 
@@ -115,14 +115,14 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 
 ## 3. Relacionamentos principais
 
-- Um supervisor/usuário pode administrar uma equipe.
+- Cada supervisor administra exatamente uma equipe na V1; uma equipe possui exatamente um supervisor responsável.
 - Uma equipe possui muitos funcionários ao longo do tempo.
 - Um funcionário possui histórico de vínculos; no máximo um vínculo atual.
 - Um funcionário pode estar associado a muitos chamados.
 - Um chamado possui um protocolo principal e um ou mais ciclos.
 - Um ciclo possui eventos, mensagens, atribuições e métricas próprias.
 - Um chamado pode ter vários técnicos em períodos distintos.
-- Um chamado pode estar relacionado a um ou mais incidentes, conforme regra de associação.
+- Um chamado pode estar relacionado a vários incidentes, conforme decisão aprovada; cada associação é explícita e auditada.
 - Um incidente pode agrupar vários chamados.
 - Um comunicado possui confirmações de leitura de vários supervisores.
 - Um serviço possui histórico de disponibilidade.
@@ -186,7 +186,7 @@ Auditoria é append-only. A role da aplicação não recebe UPDATE/DELETE na tab
 9. Fórmulas exatas de tempo de atendimento, espera e produtividade.
 10. Regras para usuários desativados e reativados, preservando histórico.
 
-## 8. Próxima entrega
+## 9. Próxima entrega
 
 Após revisão e aprovação deste modelo lógico:
 1. Diagrama ER.
