@@ -1,6 +1,6 @@
 # HelpCore — Registro de decisões
 
-Este registro consolida decisões aprovadas para evitar regressões e interpretações divergentes. A especificação funcional completa está em [SPECIFICATION-v1.0.md](SPECIFICATION-v1.0.md).
+Este registro consolida decisões aprovadas para evitar regressões e interpretações divergentes. A especificação funcional base está em [SPECIFICATION-v1.0.md](SPECIFICATION-v1.0.md). Decisões posteriores registradas aqui prevalecem quando explicitamente identificadas como atualização.
 
 | ID / tema | Decisão aprovada |
 |---|---|
@@ -20,14 +20,15 @@ Este registro consolida decisões aprovadas para evitar regressões e interpreta
 | HC-073 | Edição por supervisor somente após aprovação; autorização específica de 15 minutos. |
 | HC-074 | Cancelamento solicitado pelo supervisor e aprovado por administrador; não conta como resolvido. |
 | HC-075 | Fila TI: Novos, Em atendimento, Aguardando supervisor e Reaberturas; críticos destacados. |
-| HC-076 | Relógio não para enquanto aguarda supervisor; espera é mensurada separadamente. |
+| HC-076 (regra atualizada) | Tempo total de resolução e SLAs avançam somente nos intervalos úteis configurados; espera do supervisor continua contando dentro desses intervalos e é mensurada separadamente. Esta decisão posterior substitui a interpretação anterior de relógio corrido. |
 | HC-077 | Primeira resposta exige ação humana do técnico; automações não contam. |
 | HC-078 | Entrada em “Em atendimento” registra início automaticamente. |
 | HC-079 | Períodos individuais por técnico são preservados, inclusive transferências. |
 | HC-080 | Produtividade usa múltiplos indicadores, não apenas volume resolvido. |
 | HC-081 | Filtros por técnico, período e categoria; histórico preservado. |
 | Resolução | Supervisor tem 12 horas úteis para confirmar/contestar; ausência de resposta fecha automaticamente. |
-| Expediente | Segunda a sexta, 09:00–16:50, horário de Brasília; feriados/exceções configuráveis. |
+| Expediente contabilizável | Segunda a sexta: 09:00–12:00, 13:30–15:00 e 15:30–16:50 (America/Sao_Paulo). Total de 5h50/350 minutos por dia. Sábados, domingos e feriados/dias fechados não contam; horários especiais são configuráveis. A pausa 15:00–15:30 é de 30 minutos e substitui a referência anterior de 20 minutos. |
+| Abertura de chamados | Supervisores podem abrir chamados 24 horas por dia; fora dos intervalos úteis, o relógio de SLA/resolução fica pausado e retoma no próximo intervalo. |
 | Crítico | E-mail imediato para Kléber; aviso genérico a supervisores, sem dados privados. |
 | Arquivamento | Automático após 30 dias do fechamento; sem exclusão definitiva pela interface. |
 | Anexos | Até 5 por envio; imagens 10 MB, documentos 20 MB, vídeos 100 MB; tipos permitidos conforme especificação. |
