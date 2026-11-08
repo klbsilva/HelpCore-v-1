@@ -79,7 +79,9 @@ erDiagram
     ANNOUNCEMENTS ||--o{ ANNOUNCEMENT_ACKNOWLEDGEMENTS : acknowledged
     USERS ||--o{ ANNOUNCEMENT_ACKNOWLEDGEMENTS : confirms
 
+    BUSINESS_CALENDARS ||--o{ CALENDAR_WORK_INTERVALS : weekly_schedule
     BUSINESS_CALENDARS ||--o{ CALENDAR_EXCEPTIONS : defines
+    CALENDAR_EXCEPTIONS ||--o{ CALENDAR_EXCEPTION_WORK_INTERVALS : exception_schedule
     SLA_POLICIES ||--o{ TICKET_SLA_INSTANCES : applied
     TICKET_CYCLES ||--o{ TICKET_SLA_INSTANCES : measured
 
@@ -411,9 +413,19 @@ Um chamado pode ter vários vínculos com incidentes ao longo do tempo. Não ass
 - id UUID PK
 - name VARCHAR(100) NOT NULL
 - timezone VARCHAR(80) NOT NULL DEFAULT America/Sao_Paulo
-- weekday_start TIME NOT NULL DEFAULT 09:00
-- weekday_end TIME NOT NULL DEFAULT 16:50
 - is_active BOOLEAN NOT NULL DEFAULT TRUE
+
+#### calendar_work_intervals
+- id UUID PK
+- calendar_id UUID FK business_calendars NOT NULL
+- weekday SMALLINT NOT NULL — ISO weekday: 1=segunda ... 7=domingo
+- start_time TIME NOT NULL
+- end_time TIME NOT NULL
+- display_order SMALLINT NOT NULL
+- CHECK (weekday BETWEEN 1 AND 7)
+- CHECK (end_time > start_time)
+
+Agenda semanal padrão aprovada para segunda a sexta-feira: 09:00–12:00, 13:30–15:00 e 15:30–16:50. Sábado e domingo sem intervalos de trabalho. Isso resulta em 5h50 (350 minutos) contabilizáveis por dia. O intervalo das 15:00 às 15:30 é de 30 minutos conforme o horário informado pelo Product Owner; prevalece sobre a referência anterior de pausa de 20 minutos.
 
 #### calendar_exceptions
 - id UUID PK
@@ -426,6 +438,16 @@ Um chamado pode ter vários vínculos com incidentes ao longo do tempo. Não ass
 - created_by UUID FK users NOT NULL
 - UNIQUE(calendar_id, exception_date)
 
+#### calendar_exception_work_intervals
+- id UUID PK
+- calendar_exception_id UUID FK calendar_exceptions NOT NULL
+- start_time TIME NOT NULL
+- end_time TIME NOT NULL
+- display_order SMALLINT NOT NULL
+- CHECK (end_time > start_time)
+
+Para exception_type=special_hours, os intervalos específicos substituem a agenda semanal daquela data. Para holiday/closed, não há tempo contabilizável.
+
 #### sla_policies
 - id UUID PK
 - priority VARCHAR(20) NOT NULL
@@ -434,7 +456,7 @@ Um chamado pode ter vários vínculos com incidentes ao longo do tempo. Não ass
 - effective_until TIMESTAMPTZ NULL
 - created_by UUID FK users NOT NULL
 
-Crítica usa meta imediata (zero minutos de espera para primeira resposta); a lógica de alertas e escalonamento deve ser especificada separadamente.
+Crítica usa meta imediata (zero minutos de espera para primeira resposta); a lógica de alertas e escalonamento deve ser especificada separadamente. Com 350 minutos contabilizáveis por dia, as metas equivalem a: Baixa 700 minutos úteis; Média 350 minutos úteis; Alta 240 minutos úteis; Crítica 0 minuto. O relógio de resolução e SLA avança apenas nos intervalos configurados; espera do supervisor continua sendo contabilizada dentro desses intervalos.
 
 #### ticket_sla_instances
 - id UUID PK
